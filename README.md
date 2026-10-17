@@ -2,14 +2,83 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776AB.svg)](https://www.python.org/)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078D4.svg)](#已知限制)
+[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078D4.svg)](#requirements)
+
+**English** · [中文说明](#中文说明)
+
+A portable Windows app that organizes messy photo/video material by **category + date**, where the
+organizing work itself is a visual **card-chain workflow** — the chain you draw on the canvas *is* the
+output folder hierarchy.
+
+![Editor](docs/screenshot-editor.png)
+
+### Features
+
+- **Card chain = directory hierarchy.** `source card → (folder card) → output card`; the further a card
+  is from the source, the deeper the folder it produces.
+- **Auto-complete the three standard categories** — adding a source card automatically creates and wires
+  the *Photos / Videos / Other* output cards.
+- **Folder cards are pure directory levels.** You just type a name; they filter nothing and never write files.
+- **Output cards do the work** — they filter (Photos / Videos / Other / custom extensions) and archive.
+- **Custom-extension output cards claim their extensions exclusively**, so one file is never copied twice.
+- **Date-based archiving** — `year` / `year-month` / `yyyy-mm-dd`; EXIF capture time is preferred for photos.
+- **Concurrency** — up to 3 transfers in parallel, large videos limited to 1; per-file progress,
+  prioritize / pause / abort.
+- **Portable** — no installer, no registry writes; settings live in `MediaOrganizer.ini` next to the exe.
+- **Diagnostics** — `startup.log` plus a global exception hook (this fixes the silent `0xC0000409`
+  deaths that PyQt6 causes when an exception escapes a Qt callback).
+
+### Quick start
+
+1. Download the portable build from [Releases](../../releases) — unzip the whole folder
+   (`_internal/` is the runtime, don't copy the exe alone) and run `MediaOrganizer.exe`.
+2. **➕ Add source** → pick the material folder, then the output root folder.
+   The three category cards are created and wired for you.
+3. *(optional)* **📁 Add folder card**, type a folder name, and hang an output card under it —
+   e.g. `output/Drone/Video/2026-03-27/clip.mp4`.
+4. **▶ Run**.
+
+Run from source:
+
+```powershell
+py -m pip install PyQt6 pillow
+py media_organizer.py            # card-chain editor (default)
+py media_organizer.py --classic  # legacy "pick two folders" UI
+```
+
+### Build
+
+```powershell
+py -m pip install pyinstaller
+.\build.ps1     # -> release\MediaOrganizer\  and  release\MediaOrganizer_v1.0.zip
+```
+
+### Tests
+
+```powershell
+py media_organizer.py --selftest      # classification/date logic, exit code 0
+py tests\wf_test.py                   # scheduler end-to-end   -> _wf_result.txt
+py tests\editor_test.py               # 13 GUI checks          -> _editor_result.txt
+py media_organizer.py --smoke-leave   # crash regression       -> _smoke_result.txt
+```
+
+### Requirements
+
+Windows 10/11 · Python 3.12 (when running from source) · PyQt6 6.11 · Pillow ·
+PyInstaller 6.22 (`onedir`).
+
+### License
+
+[MIT](LICENSE). Issues and pull requests are welcome — English or 中文 both fine.
+
+---
+
+## 中文说明
 
 Windows 便携式（免安装）照片 / 视频素材整理工具：把乱七八糟的素材按**类别 + 日期**归档，
 整理过程做成一条可视化的**卡片链工作流** —— 卡片连线既是数据流，也直接决定输出目录的层级。
 
 用 Python 3.12 + PyQt6(Qt 6.11) 写成，PyInstaller 打包成单文件夹 exe，拷走即用。
-
-![编辑器界面](docs/screenshot-editor.png)
 
 ---
 
